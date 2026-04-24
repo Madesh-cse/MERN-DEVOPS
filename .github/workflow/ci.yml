@@ -8,21 +8,22 @@ jobs:
   mongo-init:
    runs-on: ubuntu-latest
 
-   services:  
-    image: mongo
-    ports: ["27017:27017"]
+   services:
+    mongo:
+     image: mongo
+     ports: ["27017:27017"]
   
    steps:
      - name: Checkout Respository
        uses: actions/checkout@v6
 
      - name: Setup Node js
-       uses: actions@setup-node@v3
+       uses: actions/setup-node@v3
        with:
         node-version: "18"
 
      - name: Wating for mongodb to be ready
-       run: 
+       run: |
           until nc -z localhost 27017; do
           echo "Waiting for mongoDB..."
           sleep 2
@@ -38,17 +39,32 @@ jobs:
   test: 
     runs-on: ubuntu-latest
 
+    services:
+     mongo:
+      image: mongo
+      ports: ["27017:27017"]
+
+
     steps:
       - name: Checkout Respository
         uses: actions/checkout@v6
 
       - name: Setup Node js
-        uses: actions@setup-node@v3
+        uses: actions/setup-node@v3
         with:
          node-version: "18"
+      
+      - name: Wait for MongoDB
+        run: |
+         until nc -z localhost 27017; do
+         echo "Waiting for mongoDB..."
+         sleep 2
+         done
 
       - name: Install depedency for backend
+        working-directory: ./backend
         run: npm install 
       
       - name: Running backend test
+        working-directory: ./backend
         run: npm test 
