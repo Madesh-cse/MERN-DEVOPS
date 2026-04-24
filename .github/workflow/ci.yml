@@ -33,7 +33,7 @@ jobs:
        working-directory: ./backend
        run: |
          npm install 
-         node seedTasksData.js 
+         node seedTasksData.js
   
   test: 
     runs-on: ubuntu-latest
